@@ -5,6 +5,20 @@ use Illuminate\Support\Facades\DB;
 
 class BookRepository
 {
+    public function deleteForUser(int $id, int $userId) : int
+    {
+        logger()->debug("Book Repository::delete - ENTER",
+            ["Id" => $id, "User Id" => $userId]);
+
+        $numBooksDeleted = DB::delete("DELETE FROM books WHERE id=? AND user_id=?",
+            [$id, $userId]);
+
+        logger()->debug("Book Repository::delete - LEAVE",
+            ["Number of books deleted" => $numBooksDeleted]);
+
+        return $numBooksDeleted;
+    }
+
     public function getAllForUser(int $userId)
     {
         logger()->debug("Book Repository::getAllForUser - ENTER", ["User Id" => $userId]);

@@ -136,6 +136,35 @@ class BookRepositoryTest extends TestCase
         $this->assertNotEquals($book[0]->updated_at, $origUpdated);
     }
 
+    public function testDeleteBook()
+    {
+        $this->seed();
+
+        $repository = new BookRepository();
+
+        // Test trying to delete a book that does not belong to user
+        $numBooksDeleted = $repository->deleteForUser(2, $this->user2Id);
+        $this->assertEquals($numBooksDeleted, 0);
+
+        $book = $repository->getByIdForUser(2, $this->user1Id);
+        $this->assertEquals(count($book), 1);
+        $this->assertEquals($book[0]->id, 2);
+        $this->assertEquals($book[0]->user_id, $this->user1Id);
+        $this->assertEquals($book[0]->title, "Blue Mars");
+        $this->assertEquals($book[0]->author, "Kim Stanley Robinson");
+        $this->assertEquals($book[0]->year, 1996);
+        $this->assertEquals($book[0]->read, true);
+        $this->assertEquals($book[0]->rating, 4);
+        $this->assertNotNull($book[0]->created_at);
+        $this->assertNotNull($book[0]->updated_at);
+
+        // Test deleting a book that belongs to user
+        $numBooksDeleted = $repository->deleteForUser(2, $this->user1Id);
+        $this->assertEquals($numBooksDeleted, 1);
+
+        $book = $repository->getByIdForUser(2, $this->user1Id);
+        $this->assertEquals(count($book), 0);
+    }
 
     private $user1Id = 1;
     private $user2Id = 2;
