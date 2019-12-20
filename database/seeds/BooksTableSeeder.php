@@ -18,8 +18,8 @@ class BooksTableSeeder extends Seeder
             "year" => 2019,
             "read" => true,
             "rating" => 4,
-            "created_at" => new DateTime(),
-            "updated_at" => new DateTime(),
+            "created_at" => "2019-12-10 03:56:45",
+            "updated_at" => "2019-12-10 03:56:45",
         ]);
 
         DB::table('books')->insert([

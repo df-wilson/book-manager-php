@@ -93,6 +93,50 @@ class BookRepositoryTest extends TestCase
         $this->assertNotNull($book[0]->updated_at);
     }
 
+    public function testUpdate()
+    {
+        $this->seed();
+
+        $repository = new BookRepository();
+
+        // Test trying to update book that does not belong to user.
+        $repository->update(1, $this->user2Id, $this->updatedTitle,$this->updatedAuthor, $this->updatedYear, $this->updatedIsRead, $this->updatedRating);
+
+        $book = $repository->getByIdForUser(1, $this->user1Id);
+        $numBooks = count($book);
+
+        $this->assertEquals($numBooks, 1);
+        $this->assertEquals($book[0]->id, 1);
+        $this->assertEquals($book[0]->user_id, $this->user1Id);
+        $this->assertEquals($book[0]->title, "The Institute");
+        $this->assertEquals($book[0]->author, "Stephen King");
+        $this->assertEquals($book[0]->year, 2019);
+        $this->assertEquals($book[0]->read, true);
+        $this->assertEquals($book[0]->rating, 4);
+        $this->assertNotNull($book[0]->created_at);
+        $this->assertNotNull($book[0]->updated_at);
+
+        $origCreated = $book[0]->created_at;
+        $origUpdated = $book[0]->updated_at;
+
+        // Test valid update
+        $repository->update(1, $this->user1Id, $this->updatedTitle,$this->updatedAuthor, $this->updatedYear, $this->updatedIsRead, $this->updatedRating);
+        $book = $repository->getByIdForUser(1, $this->user1Id);
+        $numBooks = count($book);
+
+        $this->assertEquals($numBooks, 1);
+        $this->assertEquals($book[0]->id, 1);
+        $this->assertEquals($book[0]->user_id, $this->user1Id);
+        $this->assertEquals($book[0]->title, $this->updatedTitle);
+        $this->assertEquals($book[0]->author, $this->updatedAuthor);
+        $this->assertEquals($book[0]->year, $this->updatedYear);
+        $this->assertTrue($book[0]->read == $this->updatedIsRead);
+        $this->assertEquals($book[0]->rating, $this->updatedRating);
+        $this->assertEquals($book[0]->created_at, $origCreated);
+        $this->assertNotEquals($book[0]->updated_at, $origUpdated);
+    }
+
+
     private $user1Id = 1;
     private $user2Id = 2;
     private $invalidUserId = 1000;
@@ -101,6 +145,9 @@ class BookRepositoryTest extends TestCase
     private $year1 = 2014;
     private $isRead1 = true;
     private $rating1 = 5;
-    
-    
+    private $updatedTitle = "1984";
+    private $updatedAuthor = "George Orwell";
+    private $updatedYear = 1949;
+    private $updatedIsRead = false;
+    private $updatedRating = 5;
 }
