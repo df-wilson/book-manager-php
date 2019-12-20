@@ -99,8 +99,7 @@ const book_manager = {
       mounted() 
       {
          let vm = this;
-         var token = localStorage.getItem("token");
-         axios.get('/api/v1/books?token='+token)
+         axios.get('/api/v1/books')
             .then(function(response) {
                for(let i = 0; i < response.data.books.length; i++) {
                   let book = [];
