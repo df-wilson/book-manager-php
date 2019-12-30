@@ -5,6 +5,10 @@ use Illuminate\Support\Facades\DB;
 
 class BookRepository
 {
+    const SEARCH_TYPE_AUTHOR = 0;
+    const SEARCH_TYPE_TITLE  = 1;
+    const SEARCH_TYPE_BOTH   = 2;
+
     public function deleteForUser(int $id, int $userId) : int
     {
         logger()->debug("Book Repository::delete - ENTER",
@@ -33,6 +37,36 @@ class BookRepository
 
         $book = DB::select("SELECT * FROM books WHERE id=? AND user_id=?",[$id, $userId]);
         return $book;
+    }
+
+    public function search(int $userId, int $searchType, string $searchTerm)
+    {
+        logger()->debug("Book Repository::search - ENTER",
+            ["User Id" => $userId, "SearchType" => $searchType, "Search Term" => $searchTerm]);
+
+         $books = [];
+
+        $searchQuery = "SELECT id, user_id, title, author, year, read, rating FROM books WHERE user_id = :user_id AND ";
+        switch($searchType)
+        {
+        case self::SEARCH_TYPE_AUTHOR:
+           $searchQuery .= "author LIKE :search_term";
+           break;
+
+        case self::SEARCH_TYPE_TITLE:
+           $searchQuery .= "title LIKE :search_term";
+           break;
+
+        case self::SEARCH_TYPE_BOTH:
+        default:
+            $searchQuery .= "(title LIKE :search_term OR author LIKE :search_term)";
+        }
+
+        $searchString = "%$searchTerm%";
+
+        $books = DB::select($searchQuery, ['user_id' => $userId, 'search_term' => $searchString]);
+
+       return $books;
     }
 
     public function store(int $userId, string $title, string $author, int $year, bool $read, int $rating)

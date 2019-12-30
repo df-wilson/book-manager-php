@@ -166,6 +166,54 @@ class BookRepositoryTest extends TestCase
         $this->assertEquals(count($book), 0);
     }
 
+    public function testSearch()
+    {
+        $this->seed();
+
+        $repository = new BookRepository();
+
+
+        $books = $repository->search(1,BookRepository::SEARCH_TYPE_AUTHOR, "King");
+
+        $this->assertEquals(count($books), 1);
+        $this->assertEquals($books[0]->id, 1);
+        $this->assertEquals($books[0]->user_id, $this->user1Id);
+        $this->assertEquals($books[0]->title, "The Institute");
+        $this->assertEquals($books[0]->author, "Stephen King");
+        $this->assertEquals($books[0]->year, 2019);
+        $this->assertEquals($books[0]->read, true);
+        $this->assertEquals($books[0]->rating, 4);
+
+        // Test search is not case sensitive
+        $books = $repository->search(1,BookRepository::SEARCH_TYPE_AUTHOR, "king");
+
+        $this->assertEquals(count($books), 1);
+        $this->assertEquals($books[0]->id, 1);
+        $this->assertEquals($books[0]->user_id, $this->user1Id);
+        $this->assertEquals($books[0]->title, "The Institute");
+        $this->assertEquals($books[0]->author, "Stephen King");
+        $this->assertEquals($books[0]->year, 2019);
+        $this->assertEquals($books[0]->read, true);
+        $this->assertEquals($books[0]->rating, 4);
+
+        // Test search for user 2 who does not have any books with author 'King'
+        $books = $repository->search(2,BookRepository::SEARCH_TYPE_AUTHOR, "King");
+        $this->assertEquals(0, count($books));
+
+        $books = $repository->search(1,BookRepository::SEARCH_TYPE_TITLE, "King");
+        $this->assertEquals(0, count($books));
+
+        $books = $repository->search(1,BookRepository::SEARCH_TYPE_TITLE, "Mars");
+        $this->assertEquals(1, count($books));
+
+        $books = $repository->search(1,BookRepository::SEARCH_TYPE_BOTH, "King");
+        $this->assertEquals(count($books), 1);
+
+        $books = $repository->search(1,BookRepository::SEARCH_TYPE_BOTH, "Mars");
+        $this->assertEquals(count($books), 1);
+
+    }
+
     private $user1Id = 1;
     private $user2Id = 2;
     private $invalidUserId = 1000;
