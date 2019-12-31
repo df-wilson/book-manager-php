@@ -38,8 +38,36 @@ class BookTest extends TestCase
             ->withSession(['foo' => 'bar'])
             ->get('/api/v1/books');
         $response->assertStatus(200);
+    }
 
+    public function testGetByIdForUser()
+    {
+        $this->seed();
 
+        // Test with user not authenticated
+        $response = $this->get('/api/v1/books/1');
+        $response->assertStatus(401);
+        $response->assertJson([]);
+
+        // Test with user authenticated
+        $user = User::find(1);
+
+        $response = $this->actingAs($user)->get('/api/v1/books/1');
+        $response->assertStatus(200);
+        $response->assertJson([
+            'id' => '1',
+            'user_id' => '1',
+            'author'  => 'Stephen King',
+            'title'   => 'The Institute',
+            'year'    => '2019',
+            'read'    => '1',
+            'rating'  => '4'
+        ]);
+
+        // Test with book that does not belong to user
+        $response = $this->actingAs($user)->get('/api/v1/books/3');
+        $response->assertStatus(403);
+        $response->assertJson([]);
 
     }
 }
