@@ -76,6 +76,12 @@ class BookRepository
 
         DB::insert("INSERT INTO books (user_id, title, author, year, read, rating, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?)",
             [$userId, $title, $author, $year, $read, $rating, new DateTime(), new DateTime()]);
+
+        $id = DB::getPdo()->lastInsertId();
+
+        logger()->debug("BookRepository::store - LEAVE", ["Book Id" => $id]);
+
+        return $id;
     }
 
     public function update(int $id, int $userId, string $title, string $author, int $year, bool $read, int $rating)

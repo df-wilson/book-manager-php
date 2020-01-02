@@ -55,4 +55,46 @@ class BookController extends Controller
 
         return response()->json($book, $statusCode);
     }
+
+    public function create(Request $request)
+    {
+        logger()->info("BookController::create - ENTER", ["Request" => $request->all()]);
+
+        $statusCode = 500;
+        $message = "Server error";
+
+        $userId = Auth::id();
+        logger()->debug("BookController::create", ["User Id" => $userId]);
+
+        if($userId)
+        {
+            if ($request->has(['author', 'title', 'year', 'read', 'rating']))
+            {
+                $repository = new BookRepository();
+                $bookId =$repository->store($userId,
+                                            $request->input('author'),
+                                            $request->input('title'),
+                                            $request->input('year'),
+                                            $request->input('read'),
+                                            $request->input('rating'));
+
+                $message = ["msg" => "Book saved", "id" => $bookId];
+                $statusCode = 201;
+            }
+            else
+            {
+                $message = ["msg" => "Invalid data"];
+                $statusCode = 400;
+            }
+        }
+        else
+        {
+            $message = ["msg" => "Not authorized"];
+            $statusCode = 401;
+        }
+
+        logger()->debug("BookController::create - LEAVE", ["Code" => $statusCode, "Message" => $message]);
+
+        return response()->json($message, $statusCode);
+    }
 }

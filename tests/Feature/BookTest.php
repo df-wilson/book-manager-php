@@ -11,18 +11,6 @@ class BookTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function testExample()
-    {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-    }
-    
     public function testGetAllForUser()
     {
         $this->seed();
@@ -68,6 +56,30 @@ class BookTest extends TestCase
         $response = $this->actingAs($user)->get('/api/v1/books/3');
         $response->assertStatus(403);
         $response->assertJson([]);
+    }
 
+    public function testCreate()
+    {
+        $author = "New author";
+        $title = "New title";
+        $year = 2019;
+
+        $this->seed();
+        
+        // Test with user not authenticated
+        $response = $this->postJson('/api/v1/books', ['author' => $author, 'title' => $title, 'year' => $year, 'read' => false, 'rating' => 4]);
+        $response->assertStatus(401);
+        $response->assertJson(["msg" => "Not authorized"]);
+
+        // Test with authenticated user
+        $user = User::find(1);
+        $response = $this->actingAs($user)->postJson('/api/v1/books', ['author' => $author, 'title' => $title, 'year' => $year, 'read' => false, 'rating' => 4]);
+        $response->assertStatus(201);
+        $response->assertJson(["msg" => "Book saved", "id" => '4']);
+
+        // Test with authenticated user, but incomplete data.
+        $response = $this->actingAs($user)->postJson('/api/v1/books', ['author' => $author, 'title' => $title, 'year' => $year, 'rating' => 4]);
+        $response->assertStatus(400);
+        $response->assertJson(["msg" => "Invalid data"]);
     }
 }
