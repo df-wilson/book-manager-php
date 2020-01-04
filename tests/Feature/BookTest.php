@@ -20,12 +20,31 @@ class BookTest extends TestCase
         $response->assertStatus(401);
 
         // Test with user authenticated
-        $user = factory(User::class)->create();
+        //$user = factory(User::class)->create();
+        $user = User::find(1);
 
         $response = $this->actingAs($user)
-            ->withSession(['foo' => 'bar'])
             ->get('/api/v1/books');
+        
         $response->assertStatus(200);
+        $response->assertJsonFragment(["id" => "1",
+                                       "user_id" => "1",
+                                       "title" => "The Institute",
+                                       "author" => "Stephen King",
+                                       "year" => "2019",
+                                       "read" => "1",
+                                       "rating" => "4"]);
+        $response->assertJsonFragment([
+                                       "id" => "2",
+                                       "title" => 'Blue Mars',
+                                       "author" => 'Kim Stanley Robinson',
+                                       "year" => '1996']);
+        $response->assertJsonMissing(["id" => "3",
+                                      "user_id" => '2',
+                                      "title" => 'Omega',
+                                      "author" => 'Jack McDevitt',
+                                      "year" => '2002',
+                                      "rating" => '5']);
     }
 
     public function testGetByIdForUser()

@@ -20,8 +20,9 @@ class BookController extends Controller
             $books = [];
             $statusCode = 401;
         }
-
-        return response()->json($books, $statusCode);
+        $response = ["books" => $books];
+        
+        return response()->json($response, $statusCode);
     }
 
     public function getById(int $id)
