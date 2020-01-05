@@ -101,4 +101,26 @@ class BookTest extends TestCase
         $response->assertStatus(400);
         $response->assertJson(["msg" => "Invalid data"]);
     }
+
+    public function testDelete()
+    {
+        $this->seed();
+
+        // Test with user not authenticated
+        $response = $this->delete('/api/v1/books/1');
+        $response->assertStatus(401);
+        $response->assertJson(["msg" => "Not authorized"]);
+
+        // Test with authenticated user
+        $user = User::find(1);
+        $response = $this->actingAs($user)->delete('/api/v1/books/1');
+        $response->assertStatus(200);
+        $response->assertJson(["msg" => "Book deleted"]);
+
+        // Test with user authenticated, but is not owner of book.
+        $user = User::find(1);
+        $response = $this->actingAs($user)->delete('/api/v1/books/3');
+        $response->assertStatus(404);
+        $response->assertJson(["msg" => "Book not found for user"]);
+    }
 }

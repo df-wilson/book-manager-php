@@ -12,7 +12,7 @@ class BookRepository
     public function deleteForUser(int $id, int $userId) : int
     {
         logger()->debug("Book Repository::delete - ENTER",
-            ["Id" => $id, "User Id" => $userId]);
+            ["Book Id" => $id, "User Id" => $userId]);
 
         $numBooksDeleted = DB::delete("DELETE FROM books WHERE id=? AND user_id=?",
             [$id, $userId]);

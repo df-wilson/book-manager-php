@@ -98,4 +98,46 @@ class BookController extends Controller
 
         return response()->json($message, $statusCode);
     }
+
+    public function delete(int $id)
+    {
+        logger()->info("BookController::delete - ENTER", ["Book Id" => $id]);
+
+        $statusCode = 500;
+        $message = "Server error";
+
+        $userId = Auth::id();
+        logger()->debug("BookController::delete", ["User Id" => $userId]);
+
+        if ($userId)
+        {
+            $repository = new BookRepository();
+            $numBooksDeleted = $repository->deleteForUser($id, $userId);
+
+            if($numBooksDeleted == 1)
+            {
+                $message = ["msg" => "Book deleted", "book id" => $id];
+                $statusCode = 200;
+            }
+            else if($numBooksDeleted == 0)
+            {
+                $message = ["msg" => "Book not found for user", "book id" => $id];
+                $statusCode = 404;
+            }
+            else
+            {
+                $message = ["msg" => "server error", "book id" => $id];
+                $statusCode = 500;
+            }
+        }
+        else
+        {
+            $message = ["msg" => "Not authorized"];
+            $statusCode = 401;
+        }
+
+        logger()->debug("BookController::delete - LEAVE", ["Code" => $statusCode, "Message" => $message]);
+
+        return response()->json($message, $statusCode);
+    }
 }
