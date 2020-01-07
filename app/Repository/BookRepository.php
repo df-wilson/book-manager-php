@@ -84,7 +84,7 @@ class BookRepository
         return $id;
     }
 
-    public function update(int $id, int $userId, string $title, string $author, int $year, bool $read, int $rating)
+    public function update(int $userId, int $id, string $title, string $author, int $year, bool $read, int $rating)
     {
         logger()->debug("Book Repository::update - ENTER",
             ["Id" => $id, "User Id" => $userId, "Title" => $title, "Author" => $author, "Year" => $year, "Is Read" => $read, "Rating" => $rating]);
@@ -99,6 +99,8 @@ class BookRepository
 
         logger()->debug("BookRepository::update - LEAVE",
             ["Rows affected" => $affected]);
+
+        return $affected;
     }
 }
 

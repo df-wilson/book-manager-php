@@ -120,7 +120,9 @@ class BookRepositoryTest extends TestCase
         $origUpdated = $book[0]->updated_at;
 
         // Test valid update
-        $repository->update(1, $this->user1Id, $this->updatedTitle,$this->updatedAuthor, $this->updatedYear, $this->updatedIsRead, $this->updatedRating);
+        $numRowsUpdated = $repository->update($this->user1Id, 1, $this->updatedTitle,$this->updatedAuthor, $this->updatedYear, $this->updatedIsRead, $this->updatedRating);
+        $this->assertEquals(1, $numRowsUpdated);
+        
         $book = $repository->getByIdForUser(1, $this->user1Id);
         $numBooks = count($book);
 
