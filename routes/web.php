@@ -22,4 +22,5 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/api/v1/books', 'BookController@index');
 Route::get('/api/v1/books/{id}', 'BookController@getById');
 Route::post('/api/v1/books', 'BookController@create');
+Route::put('/api/v1/books/{id}', 'BookController@update');
 Route::delete('/api/v1/books/{id}', 'BookController@delete');

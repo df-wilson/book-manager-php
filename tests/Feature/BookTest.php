@@ -102,6 +102,45 @@ class BookTest extends TestCase
         $response->assertJson(["msg" => "Invalid data"]);
     }
 
+    public function testUpdate()
+    {
+        $author = "New author";
+        $title = "New title";
+        $year = 2020;
+        $read = false;
+        $rating = 5;
+
+        $this->seed();
+
+        // Test with user not authenticated
+        $response = $this->putJson('/api/v1/books', ['id' => 1, 'author' => $author, 'title' => $title, 'year' => $year, 'read' => $read, 'rating' => 4]);
+        $response->assertStatus(401);
+        $response->assertJson(["msg" => "Not authorized"]);
+
+        // Test with authenticated user
+        $user = User::find(1);
+        $response = $this->actingAs($user)->putJson('/api/v1/books', ['id' => 1, 'author' => $author, 'title' => $title, 'year' => $year, 'read' => $read, 'rating' => $rating]);
+        $response->assertStatus(200);
+        $response->assertJson(["msg" => "Book updated", "id" => '1']);
+
+        $response = $this->actingAs($user)->get('/api/v1/books/1');
+        $response->assertStatus(200);
+        $response->assertJson([
+            'id' => '1',
+            'user_id' => '1',
+            'author'  => $author,
+            'title'   => $title,
+            'year'    => $year,
+            'read'    => $read,
+            'rating'  => $rating
+        ]);
+
+        // Test with authenticated user, but incomplete data.
+        $response = $this->actingAs($user)->putJson('/api/v1/books', ['id' => 1, 'author' => $author, 'title' => $title, 'year' => $year, 'rating' => 4]);
+        $response->assertStatus(400);
+        $response->assertJson(["msg" => "Invalid data"]);
+    }
+
     public function testDelete()
     {
         $this->seed();

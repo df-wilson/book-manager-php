@@ -140,4 +140,52 @@ class BookController extends Controller
 
         return response()->json($message, $statusCode);
     }
+    
+    public function update(int $id, Request $request)
+    {
+        logger()->info("BookController::update - ENTER", ["Request" => $request->all()]);
+
+        $statusCode = 500;
+        $message = "Server error";
+
+        $userId = Auth::id();
+        logger()->debug("BookController::update", ["User Id" => $userId]);
+
+        if($userId)
+        {
+            if ($request->has(['author', 'title', 'year', 'read', 'rating']))
+            {
+                $repository = new BookRepository();
+                $rowsUpdated = $repository->update($userId,
+                               $id,
+                               $request->input('title'),
+                               $request->input('author'),
+                               $request->input('year'),
+                               $request->input('read'),
+                               $request->input('rating'));
+
+                if($rowsUpdated > 1) {
+                    logger()->error("BookRepository::update - ERROR: More than 1 row was updated",
+                        ["Rows updated" => $rowsUpdated]);
+                }
+
+                $message = ["msg" => "Book updated", "id" => $request->input('id')];
+                $statusCode = 200;
+            }
+            else
+            {
+                $message = ["msg" => "Invalid data"];
+                $statusCode = 400;
+            }
+        }
+        else
+        {
+            $message = ["msg" => "Not authorized"];
+            $statusCode = 401;
+        }
+
+        logger()->debug("BookController::update - LEAVE", ["Code" => $statusCode, "Message" => $message]);
+
+        return response()->json($message, $statusCode);
+    }
 }
