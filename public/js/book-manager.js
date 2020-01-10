@@ -191,8 +191,8 @@ const book_manager = {
          onDelete(index) 
          {
             let vm = this;
-            var token = localStorage.getItem("token");
-            axios.delete('/api/v1/books/' + vm.books[index].id+'?token='+token)
+
+            axios.delete('/api/v1/books/' + vm.books[index].id)
                  .then(function(response) 
                  {
                      vm.books.splice(index, 1);
@@ -211,7 +211,6 @@ const book_manager = {
          onSubmitSearch()
          {
             let vm = this;
-            var token = localStorage.getItem("token");
             
             var searchType = "both";
             if(this.searchTitle && !this.searchAuthor) {
@@ -222,7 +221,7 @@ const book_manager = {
                searchType = "both";
             }
             
-            axios.get('/api/v1/books/search/'+this.searchTerm+'?token='+token+'&searchType='+searchType)
+            axios.get('/api/v1/books/search/'+this.searchTerm+'&searchType='+searchType)
                .then(function(response) {
                   vm.books = [];
                   for(let i = 0; i < response.data.books.length; i++) {
@@ -241,4 +240,4 @@ const book_manager = {
          });
          }
       }
-  }
+  };

@@ -227,8 +227,8 @@ const add_book = {
       {
          // Creating a new book.
          let vm = this;
-         var token = localStorage.getItem("token");
-         axios.post('/api/v1/books?token='+token, vm.book)
+
+         axios.post('/api/v1/books', vm.book)
               .then(function(response) {
                   vm.book.id = response.data.id;
                   vm.books.push(vm.book);
@@ -236,13 +236,6 @@ const add_book = {
                })
               .catch(function(error) {
                   vm.clearErrors();
-                  alert("Error param in response " + JSON.stringify(error)); 
-               
-                  if(error.response.data.errors) {
-                     vm.displayErrors(error.response.data.errors);
-                  } else {
-                     alert("Errors undefined in response " + JSON.stringify(error)); 
-                  }
                })
       },
          
@@ -250,8 +243,8 @@ const add_book = {
       {
          // Updating an existing book
          let vm = this;
-         var token = localStorage.getItem("token");
-         axios.put("/api/v1/books/" + this.book.id+'?token='+token,
+
+         axios.put("/api/v1/books/"+this.book.id,
                {
                   title:  this.book.title,
                   author: this.book.author,
@@ -263,10 +256,9 @@ const add_book = {
                   router.push({path: '/book-manager'});
                })
                .catch(function(error) {
-                  alert("Error param in response " + JSON.stringify(error)); 
                   vm.clearErrors();
                   vm.displayErrors(error.response.data.errors);
                });
-      },
+      }
    }
-}
+};
