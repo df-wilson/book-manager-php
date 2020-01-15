@@ -22,7 +22,7 @@ const book_manager = {
 
       <div class="row" id="book-manager">
          <div class="col-12">
-            <h2 class="center">All Books</h2>
+            <h2 class="center">{{subtitle}}</h2>
             <table class="table table-bordered">
                <tr class="table-success">
                   <th class="clickable" v-on:click.prevent="onSortTitle()">Title <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
@@ -55,6 +55,7 @@ const book_manager = {
       data () {
          return {
             title: 'Book Manager',
+            subtitle: 'All Books',
             books: [],
             book: 
             {
@@ -220,24 +221,26 @@ const book_manager = {
             } else {
                searchType = "both";
             }
-            
-            axios.get('/api/v1/books/search/'+this.searchTerm+'&searchType='+searchType)
-               .then(function(response) {
-                  vm.books = [];
-                  for(let i = 0; i < response.data.books.length; i++) {
-                     let book = [];
-                     book.id = response.data.books[i].id;
-                     book.title = response.data.books[i].title;
-                     book.author = response.data.books[i].author;
-                     book.year = response.data.books[i].year;
-                     book.read = response.data.books[i].read != 0;
-                     book.rating = response.data.books[i].rating;
-                     vm.books.push(book);
-                  }
-               
-            })
-            .catch(function(error) {
-         });
+
+            if(this.searchTerm) {
+               axios.get('/api/v1/books/search/'+this.searchTerm+'?searchType='+searchType)
+                   .then(function(response) {
+                      vm.subtitle = 'Search Results';
+                      vm.books = [];
+                      for(let i = 0; i < response.data.books.length; i++) {
+                         let book = [];
+                         book.id = response.data.books[i].id;
+                         book.title = response.data.books[i].title;
+                         book.author = response.data.books[i].author;
+                         book.year = response.data.books[i].year;
+                         book.read = response.data.books[i].read != 0;
+                         book.rating = response.data.books[i].rating;
+                         vm.books.push(book);
+                      }
+                   })
+                   .catch(function(error) {
+                   });
+            }
          }
       }
   };

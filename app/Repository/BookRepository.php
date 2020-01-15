@@ -5,10 +5,6 @@ use Illuminate\Support\Facades\DB;
 
 class BookRepository
 {
-    const SEARCH_TYPE_AUTHOR = 0;
-    const SEARCH_TYPE_TITLE  = 1;
-    const SEARCH_TYPE_BOTH   = 2;
-
     public function deleteForUser(int $id, int $userId) : int
     {
         logger()->debug("Book Repository::delete - ENTER",
@@ -39,7 +35,7 @@ class BookRepository
         return $book;
     }
 
-    public function search(int $userId, int $searchType, string $searchTerm)
+    public function search(int $userId, string $searchType, string $searchTerm)
     {
         logger()->debug("Book Repository::search - ENTER",
             ["User Id" => $userId, "SearchType" => $searchType, "Search Term" => $searchTerm]);
@@ -49,17 +45,20 @@ class BookRepository
         $searchQuery = "SELECT id, user_id, title, author, year, read, rating FROM books WHERE user_id = :user_id AND ";
         switch($searchType)
         {
-        case self::SEARCH_TYPE_AUTHOR:
+        case "author":
            $searchQuery .= "author LIKE :search_term";
            break;
 
-        case self::SEARCH_TYPE_TITLE:
+        case "title":
            $searchQuery .= "title LIKE :search_term";
            break;
 
-        case self::SEARCH_TYPE_BOTH:
-        default:
+        case "both":
             $searchQuery .= "(title LIKE :search_term OR author LIKE :search_term)";
+            break;
+
+        default:
+            logger()->error("Invalid search type");
         }
 
         $searchString = "%$searchTerm%";

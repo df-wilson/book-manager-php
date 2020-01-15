@@ -175,7 +175,7 @@ class BookRepositoryTest extends TestCase
         $repository = new BookRepository();
 
 
-        $books = $repository->search(1,BookRepository::SEARCH_TYPE_AUTHOR, "King");
+        $books = $repository->search(1,"author", "King");
 
         $this->assertEquals(count($books), 1);
         $this->assertEquals($books[0]->id, 1);
@@ -187,7 +187,7 @@ class BookRepositoryTest extends TestCase
         $this->assertEquals($books[0]->rating, 4);
 
         // Test search is not case sensitive
-        $books = $repository->search(1,BookRepository::SEARCH_TYPE_AUTHOR, "king");
+        $books = $repository->search(1,"author", "king");
 
         $this->assertEquals(count($books), 1);
         $this->assertEquals($books[0]->id, 1);
@@ -199,19 +199,19 @@ class BookRepositoryTest extends TestCase
         $this->assertEquals($books[0]->rating, 4);
 
         // Test search for user 2 who does not have any books with author 'King'
-        $books = $repository->search(2,BookRepository::SEARCH_TYPE_AUTHOR, "King");
+        $books = $repository->search(2,"author", "King");
         $this->assertEquals(0, count($books));
 
-        $books = $repository->search(1,BookRepository::SEARCH_TYPE_TITLE, "King");
+        $books = $repository->search(1,"title", "King");
         $this->assertEquals(0, count($books));
 
-        $books = $repository->search(1,BookRepository::SEARCH_TYPE_TITLE, "Mars");
+        $books = $repository->search(1,"title", "Mars");
         $this->assertEquals(1, count($books));
 
-        $books = $repository->search(1,BookRepository::SEARCH_TYPE_BOTH, "King");
+        $books = $repository->search(1,"both", "King");
         $this->assertEquals(count($books), 1);
 
-        $books = $repository->search(1,BookRepository::SEARCH_TYPE_BOTH, "Mars");
+        $books = $repository->search(1,"both", "Mars");
         $this->assertEquals(count($books), 1);
 
     }

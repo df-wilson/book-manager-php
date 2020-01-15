@@ -140,7 +140,39 @@ class BookController extends Controller
 
         return response()->json($message, $statusCode);
     }
-    
+
+    public function search(Request $request, string $search)
+    {
+        logger()->info("BookController::search - ENTER", ["Query Type" => $request->query(), "Search Term" => $search]);
+
+        $statusCode = 500;
+        $message = ["msg" => "Server error"];
+        $books = ['books' => []];
+
+        $userId = Auth::id();
+        logger()->debug("BookController::search", ["User Id" => $userId]);
+
+        if($userId)
+        {
+            $searchType = strtolower($request->query('searchType'));
+            $repository = new BookRepository();
+            $results = $repository->search($userId, $searchType, $search);
+
+            logger()->debug("BookController::search", ["Results" => $results]);
+            $message = ["msg" => "ok", "books" => $results];
+            $statusCode = 200;
+        }
+        else
+        {
+            $message = ["msg" => "Not authorized", "books" => []];
+            $statusCode = 401;
+        }
+
+        logger()->debug("BookController::search - LEAVE", ["Code" => $statusCode, "Message" => $message]);
+
+        return response()->json($message, $statusCode);
+    }
+
     public function update(int $id, Request $request)
     {
         logger()->info("BookController::update - ENTER", ["Request" => $request->all()]);
