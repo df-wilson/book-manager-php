@@ -201,7 +201,7 @@ class BookController extends Controller
                         ["Rows updated" => $rowsUpdated]);
                 }
 
-                $message = ["msg" => "Book updated", "id" => $request->input('id')];
+                $message = ["msg" => "Book updated", "id" => $id];
                 $statusCode = 200;
             }
             else
