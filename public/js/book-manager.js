@@ -89,12 +89,7 @@ const book_manager = {
       
       beforeMount() 
       {
-         let logoutItem = document.getElementById("logout-menu");
-         logoutItem.style.display='block';
-         let loginItem = document.getElementById("login-menu");
-         loginItem.style.display='none';
-         let registerItem = document.getElementById("register-menu");
-         registerItem.style.display='none';
+
       },
       
       mounted() 

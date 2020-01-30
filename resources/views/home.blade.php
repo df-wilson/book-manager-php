@@ -9,8 +9,14 @@
     <link href="/css/site.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
-<div id="app">
 
+@guest
+<input type="hidden" id="isLoggedIn" name="isLoggedIn" value="false">
+@else
+    <input type="hidden" id="isLoggedIn" name="isLoggedIn" value="true">
+@endif
+
+<div id="app">
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <span><router-link to="/" class="navbar-brand">Book Manager</router-link></span>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,25 +25,37 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav">
+                @auth
                 <li class="nav-item">
-                    <span><router-link to="/add" class="nav-link">Add</router-link></span>
+                    <span><router-link to="/add" class="nav-link" id="add-menu">Add</router-link></span>
                 </li>
                 <li class="nav-item">
                     <span><router-link to="/book-manager" class="nav-link">Show All</router-link></span>
                 </li>
+                @endauth
             </ul>
         </div>
         <ul class="navbar-nav ml-auto">
+            @guest
             <li class="nav-item">
-                <span><router-link to="/login" class="nav-link" id="login-menu">Login</router-link></span>
+                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
             </li>
             <li class="nav-item">
-                <span><router-link to="/register" class="nav-link" id="register-menu">Register</router-link></span>
+                <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
             </li>
+            @else
+            <li class="nav-item">
+                <a class="dropdown-item" href="{{ route('logout') }}"
+                   onclick="event.preventDefault();
+                   document.getElementById('logout-form').submit();">
+                    {{ __('Logout') }}
+                </a>
 
-            <li class="nav-item">
-                <span><router-link to="/logout" class="nav-link" id="logout-menu">Logout</router-link></span>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
             </li>
+            @endguest
         </ul>
     </nav>
 
@@ -54,7 +72,6 @@
 <script src="/js/add-book.js"></script>
 <script src="/js/start.js"></script>
 <script src="/js/login.js"></script>
-<script src="/js/logout.js"></script>
 <script src="/js/register.js"></script>
 <script src="/js/book-manager.js"></script>
 <script src="/js/app.js"></script>

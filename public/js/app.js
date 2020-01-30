@@ -1,7 +1,6 @@
 const routes = [
    { path: '/', component: home },
    { path: '/login', component: login_form },
-   { path: '/logout', component: logout },
    { path: '/register', component: register_form },
    { path: '/add', component: add_book },
    { path: '/edit', component: add_book },
@@ -13,5 +12,5 @@ const router = new VueRouter({
 });
 
 const app = new Vue({
-   router,
+   router
 }).$mount('#app');
