@@ -3,7 +3,6 @@ const book_manager = {
    <div class="container">
       <div class="row">
          <div class="col-12">
-            <h1 class="center">{{title}}</h1>
             <h3>Search</h3> 
             <form v-on:submit.prevent="onSubmitSearch">
                <div class="form-inline my-2 my-lg-0">
