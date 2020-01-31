@@ -59,6 +59,8 @@
                 @endguest
             </ul>
         </nav>
+        <hr style="margin-top:0">
+
         <main class="py-4">
             @yield('content')
         </main>
